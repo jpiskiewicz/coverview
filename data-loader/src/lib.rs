@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-// use std::collections::HashMap;
+use std::collections::HashMap;
 
 extern crate web_sys;
 
@@ -92,13 +92,29 @@ fn get_records(filename: &str, content: &str, name_prefix: &str) -> Vec<Record> 
   return records;
 }
 
+struct SubGroup {
+  value: int
+}
+
+struct Group {
+  sub_groups: HashMap<String, SubGroup>
+}
+
+impl Group {
+  fn get_sub_group(&self, name: String) {
+  
+  }
+}
+
 /* TODO)) This function will also accept a third argument callled "records" in the future which will be a HashMap<str, Record>.
  * The Record struct will be created later along with the relevant impl. */  
 #[wasm_bindgen]
 pub fn parse_info(filename: &str, content: &str) -> Vec<String> {
   let mut records: Vec<String> = Vec::new();
   
-  for record in get_records(filename, content, "SF") { records.push(format!("{record:#?}")) }
+  for record in get_records(filename, content, "SF") { 
+    
+  }
   
   records
 }
