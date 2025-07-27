@@ -30,12 +30,12 @@ struct Record {
 
 fn unify_source_path(content: &str) -> String {
   let mut unified_components: Vec<String> = Vec::new();
-  
+
   for comp in content.split("/") {
     if comp == ".." && unified_components.len() > 0 { unified_components.pop(); }
     else if comp != "." && comp != "" { unified_components.push(comp.to_string()); }
   }
-  
+
   return unified_components.join("/")
 }
 
@@ -68,7 +68,7 @@ fn get_records(filename: &str, content: &str, name_prefix: &str) -> Vec<Record> 
         }
         continue
       }
-      
+
       let (prefix, content_with_colon) = line.split_at(separator_index);
       let content = &content_with_colon[1..];
       if prefix == name_prefix {
@@ -79,9 +79,9 @@ fn get_records(filename: &str, content: &str, name_prefix: &str) -> Vec<Record> 
         }
         continue;
       }
-      
+
       lines.push(Line{prefix: prefix.to_string(), content: content.to_string()});
-      
+
       match raw_lines.next() {
        Some(next_line) => line = next_line,
        None => { break }
@@ -93,7 +93,13 @@ fn get_records(filename: &str, content: &str, name_prefix: &str) -> Vec<Record> 
 }
 
 struct SubGroup {
-  value: int
+  value: u32
+}
+
+impl SubGroup {
+  fn new() -> SubGroup {
+    SubGroup{value: 0}
+  }
 }
 
 struct Group {
@@ -101,20 +107,37 @@ struct Group {
 }
 
 impl Group {
-  fn get_sub_group(&self, name: String) {
-  
+  fn get_sub_group(&mut self, name: &str) -> &SubGroup {
+    if !self.sub_groups.contains_key(name) {
+      self.sub_groups.insert(name.to_string(), SubGroup::new());
+    }
+    self.sub_groups.get(name).unwrap()
+  }
+
+  fn stats(&self) -> (u32, u32) {
+    let (mut hits, mut total) = (0, 0);
+    for group in self.sub_groups.values() {
+      if group.value > 0 { hits += 1 }
+      total += 1;
+    }
+    (hits, total)
   }
 }
 
+struct SourceLine {
+  value: u32,
+  groups: HashMap<String, Group>,
+}
+
 /* TODO)) This function will also accept a third argument callled "records" in the future which will be a HashMap<str, Record>.
- * The Record struct will be created later along with the relevant impl. */  
+ * The Record struct will be created later along with the relevant impl. */
 #[wasm_bindgen]
 pub fn parse_info(filename: &str, content: &str) -> Vec<String> {
   let mut records: Vec<String> = Vec::new();
-  
-  for record in get_records(filename, content, "SF") { 
-    
+
+  for record in get_records(filename, content, "SF") {
+
   }
-  
+
   records
 }
